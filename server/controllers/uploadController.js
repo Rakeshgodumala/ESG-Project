@@ -44,6 +44,7 @@ exports.uploadCSV = async (
 
           for (const item of results) {
 
+            // Save Raw Record
             const rawRecord =
               await RawRecord.create({
 
@@ -53,9 +54,11 @@ exports.uploadCSV = async (
                 rawData: item,
               });
 
+            // Normalize Data
             const normalized =
               normalizeData(item);
 
+            // Save Normalized Record
             await NormalizedRecord.create({
 
               rawRecordId:
@@ -65,21 +68,28 @@ exports.uploadCSV = async (
                 req.body.sourceType,
 
               category:
-                normalized.category,
+                item.category,
 
               amount:
-                normalized.amount,
+                Number(item.amount),
 
               unit:
-                normalized.unit,
+                item.unit,
 
               normalizedValue:
                 normalized.normalizedValue,
 
+              status: "PENDING",
+
               isSuspicious:
-                normalized.isSuspicious,
+                Number(item.amount) < 0,
+
+              locked: false,
             });
           }
+
+          // Delete uploaded temp file
+          fs.unlinkSync(req.file.path);
 
           return res.status(200).json({
             message:
