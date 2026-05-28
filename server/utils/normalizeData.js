@@ -37,3 +37,12 @@ const normalizeData = (record) => {
 };
 
 module.exports = normalizeData;
+
+
+
+
+
+
+
+
+

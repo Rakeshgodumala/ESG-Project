@@ -1,5 +1,3 @@
-
-
 const fs = require("fs");
 
 const csv = require("csv-parser");
@@ -44,7 +42,6 @@ exports.uploadCSV = async (
 
           for (const item of results) {
 
-            // Save Raw Record
             const rawRecord =
               await RawRecord.create({
 
@@ -54,11 +51,9 @@ exports.uploadCSV = async (
                 rawData: item,
               });
 
-            // Normalize Data
             const normalized =
               normalizeData(item);
 
-            // Save Normalized Record
             await NormalizedRecord.create({
 
               rawRecordId:
@@ -68,28 +63,21 @@ exports.uploadCSV = async (
                 req.body.sourceType,
 
               category:
-                item.category,
+                normalized.category,
 
               amount:
-                Number(item.amount),
+                normalized.amount,
 
               unit:
-                item.unit,
+                normalized.unit,
 
               normalizedValue:
                 normalized.normalizedValue,
 
-              status: "PENDING",
-
               isSuspicious:
-                Number(item.amount) < 0,
-
-              locked: false,
+                normalized.isSuspicious,
             });
           }
-
-          // Delete uploaded temp file
-          fs.unlinkSync(req.file.path);
 
           return res.status(200).json({
             message:
@@ -121,3 +109,52 @@ exports.uploadCSV = async (
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
